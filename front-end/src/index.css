@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@layer base {
+  * {
+    @apply m-0 p-0 box-border;
+  }
+
+  html, body, #root {
+    @apply h-full w-full bg-[#0B0B1A] text-white overflow-x-hidden;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
