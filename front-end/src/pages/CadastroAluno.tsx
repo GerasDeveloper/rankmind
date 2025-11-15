@@ -36,7 +36,7 @@ export default function CadastroAluno() {
         <img
           src={ImageAluno}
           alt='Foto do aluno'
-          className="w-[200px] flex md:w-auto mb-12 md:mb-[3px] object-contain"
+          className="w-[200px] flex md:w-auto mb-12 md:mb-23 object-contain"
         />
       </div>
 

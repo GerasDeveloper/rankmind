@@ -7,6 +7,7 @@ import Relatorios from "../pages/Relatorios";
 import HistoricoEscolar from "../pages/HistoricoEscolar";
 import CadastroAluno from "../pages/CadastroAluno";
 import Login from "../pages/Login";
+import Perfil from "../pages/Perfil";
 
 function AppContent() {
     const location = useLocation();
@@ -28,6 +29,7 @@ function AppContent() {
                         <Route path="/Historico" element={<HistoricoEscolar />} />
                         <Route path="/Dashboard/:curso" element={<Dashboard />} />
                         <Route path="/cadastro" element={<CadastroAluno />} />
+                        <Route path="/Perfil" element={<Perfil />} />
                     </Route>
                 </Routes>
             )}

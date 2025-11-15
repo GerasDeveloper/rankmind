@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Filter } from "lucide-react";
 
-export default function Filtros({ onFiltroSelect }: { onFiltroSelect?: (filtro: string) => void }) {
+export default function Filtros({ onFiltroSelect }: { onFiltroSelect?: (filtros: string[]) => void }) {
   const [aberto, setAberto] = useState(false);
+  const [selecionados, setSelecionados] = useState<string[]>([]);
 
   const opcoes = [
     "INFOR",
@@ -14,6 +15,24 @@ export default function Filtros({ onFiltroSelect }: { onFiltroSelect?: (filtro: 
     "PÚBLICA",
     "PRIVADA",
   ];
+
+  const alternarFiltro = (opcao: string) => {
+    setSelecionados((prev) => {
+      const jaSelecionado = prev.includes(opcao);
+
+      let novos;
+      if (jaSelecionado) {
+        novos = prev.filter((f) => f !== opcao);
+      } else if (prev.length < 3) {
+        novos = [...prev, opcao];
+      } else {
+        novos = prev;
+      }
+
+      onFiltroSelect?.(novos);
+      return novos;
+    });
+  };
 
   return (
     <div
@@ -31,7 +50,7 @@ export default function Filtros({ onFiltroSelect }: { onFiltroSelect?: (filtro: 
         "
       >
         <Filter size={22} />
-        <span>Filtros</span>
+        <span>Filtros ({selecionados.length}/3)</span>
       </button>
 
       {aberto && (
@@ -41,20 +60,25 @@ export default function Filtros({ onFiltroSelect }: { onFiltroSelect?: (filtro: 
             animate-fadeIn
           "
         >
-          {opcoes.map((opcao) => (
-            <button
-              key={opcao}
-              onClick={() => onFiltroSelect?.(opcao)}
-              className="
-                px-5 py-2 border border-[#00bfff]
-                rounded-full text-[#00bfff]
-                hover:bg-[#00bfff]/20 transition
-                text-sm md:text-base active:bg-[#00bfff]/20 focus:bg-[#00bfff]/20
-              "
-            >
-              {opcao}
-            </button>
-          ))}
+          {opcoes.map((opcao) => {
+            const ativo = selecionados.includes(opcao);
+            return (
+              <button
+                key={opcao}
+                onClick={() => alternarFiltro(opcao)}
+                className={`
+                  px-5 py-2 border rounded-full text-sm md:text-base transition
+                  ${
+                    ativo
+                      ? "border-[#00ffcc] bg-[#00ffcc]/20 text-[#00ffcc]"
+                      : "border-[#00bfff] text-[#00bfff] hover:bg-[#00bfff]/20"
+                  }
+                `}
+              >
+                {opcao}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>

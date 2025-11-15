@@ -44,7 +44,7 @@ export default function Sidebar() {
       <aside
         className={`
           fixed top-0 left-0 h-full z-40
-          ${collapsed ? "w-30" : "w-80"}
+          ${collapsed ? "w-30" : "w-80"}  
           ${mobile ? (open ? "translate-x-0" : "-translate-x-full") : "translate-x-0"}
           bg-linear-to-b from-[#0B0B1A] to-[#0E0F1A]
           shadow-[0_0_80px_10px_rgba(255,183,77,0.2)]
@@ -72,17 +72,18 @@ export default function Sidebar() {
           )}
 
           <div
-            className={`flex items-center gap-3 px-6 pb-6 border-b border-white/10 transition-all duration-500 ${collapsed ? "justify-center" : ""
+            className={`flex items-center cursor-pointer gap-3 px-6 pb-6 border-b border-white/10 transition-all duration-500 ${collapsed ? "justify-center" : ""
               }`}
+            onClick={() => navigate("/Perfil")}
           >
             <img
               alt="Foto"
               src={image}
-              className="w-14 h-14 rounded-full border-2 border-white/20 object-cover"
+              className="w-14 h-14 mt-10 md:ml-10 md:mt-0 lg:ml-0 rounded-full border-2 border-white/20 object-cover"
             />
             {!collapsed && (
               <div>
-                <h2 className="font-semibold text-lg">Geraldo O.</h2>
+                <h2 className="font-semibold text-lg mt-10 md:mt-0">Geraldo O.</h2>
               </div>
             )}
           </div>
