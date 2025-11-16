@@ -17,7 +17,7 @@ export default function Login() {
       return;
     }
 
-    if (user.trim() === "" && password.trim() === "") {
+    if (user.trim() === "user" && password.trim() === "1234") {
       navigate("/home");
     } else {
       alert("Usuário ou senha incorretos!");
