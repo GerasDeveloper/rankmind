@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ANOS, DISCIPLINAS_REGULARES } from "../data/disciplinas";
 import type { Ano } from "../types/anos";
 
@@ -10,6 +10,23 @@ import MediaDisciplina from "../components/MediaGeralDisciplina";
 import MediaGeralDisciplinas from "../components/MediaDisciplinas";
 
 export default function HistoricoEscolar() {
+  const [mobile, setMobile] = useState(false);
+  const [desktop, setDesktop] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setMobile(window.innerWidth < 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => setDesktop(window.innerWidth >= 1024);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   const [modalidade, setModalidade] = useState<"Escola Regular" | "EJA">(
     "Escola Regular"
   );
@@ -31,34 +48,47 @@ export default function HistoricoEscolar() {
     disciplinasSelecionadas.includes(d.id)
   );
 
+
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0e0f1a] relative overflow-hidden">
 
       {/* HEADER */}
-      <header className="flex items-center justify-between w-full px-10 mb-6">
-        <h1 className="text-5xl font-bold text-[#FFA63F]">Histórico</h1>
+      <header className="flex items-center justify-between w-full px-10 mb-4 md:mb-6">
+        <h1 className="text-3xl md:text-5xl mt-18 md:mt-0 font-bold text-[#FFA63F]">Histórico</h1>
 
-        <button
-          onClick={() =>
-            setModalidade((prev) =>
-              prev === "Escola Regular" ? "EJA" : "Escola Regular"
-            )
-          }
-          className="px-6 py-3 rounded-full bg-[#0B0B26] border border-[#EFA61F]/50 text-[#EFA61F] text-lg font-medium"
-        >
-          {modalidade}
-        </button>
+        {mobile && (
+            <button
+              onClick={() =>
+                setModalidade((prev) =>
+                  prev === "Escola Regular" ? "EJA" : "Escola Regular"
+                )
+              }
+              className="px-4 py-3 mt-20 rounded-full bg-[#0B0B26] border border-[#EFA61F]/50 text-[#EFA61F] text-sm font-medium"
+            >
+              {modalidade}
+            </button>
+        )}
 
-        <button className="w-15 h-15 rounded-full bg-[#C87A2A] flex items-center justify-center text-2xl">
-          ✓
-        </button>
+        {desktop && (
+          <><button
+            onClick={() => setModalidade((prev) => prev === "Escola Regular" ? "EJA" : "Escola Regular"
+            )}
+            className="px-4 py-3 rounded-full bg-[#0B0B26] border border-[#EFA61F]/50 text-[#EFA61F] text-sm font-medium"
+          >
+            {modalidade}
+          </button><button className="w-15 h-15 rounded-full bg-[#C87A2A] flex items-center justify-center text-2xl">
+              ✓
+            </button></>
+        )}
+
       </header>
 
       {/* TABELA */}
       <div className="flex flex-col mt-5">
 
-        {/* CABEÇALHO */}
-        <div className="flex gap-6 mb-4">
+        {/* --- CABEÇALHO DESKTOP --- */}
+        <div className="hidden md:flex gap-6 mb-4">
           <span className="w-75 text-center mr-5 bg-[#0B0B26]/70 text-[#EFA61F] text-xl px-10 py-3 rounded-full border">
             Disciplinas
           </span>
@@ -77,8 +107,8 @@ export default function HistoricoEscolar() {
           </span>
         </div>
 
-        {/* CORPO */}
-        <div className="flex flex-row justify-center items-center gap-12">
+        {/* --- DESKTOP --- */}
+        <div className="hidden md:flex flex-row justify-center items-center gap-12">
 
           {/* COLUNA DISCIPLINAS */}
           <div className="w-80 bg-[#030315] rounded-3xl p-4 flex flex-col gap-2">
@@ -96,7 +126,7 @@ export default function HistoricoEscolar() {
             </button>
           </div>
 
-          {/* INPUTS DE NOTAS */}
+          {/* INPUTS POR ANO */}
           {ANOS.map((ano) => (
             <div key={ano} className="flex flex-col gap-2 w-40">
               {disciplinasAtivas.map((d) => (
@@ -118,7 +148,7 @@ export default function HistoricoEscolar() {
             </div>
           ))}
 
-          {/* MEDIA POR DISCIPLINA */}
+          {/* MÉDIA POR DISCIPLINA */}
           <div className="flex flex-col gap-2 w-40">
             {disciplinasAtivas.map((d) => {
               const notasDisciplina = { [d.id]: notas[d.id] };
@@ -134,19 +164,83 @@ export default function HistoricoEscolar() {
           </div>
         </div>
 
-        {/* LINHA DAS MÉDIAS */}
-        <div className="flex flex-row gap-12 mt-6 ml-[375px]">
+        {/* --- DESKTOP: LINHA DAS MÉDIAS GERAIS --- */}
+        <div className="hidden md:flex flex-row gap-12 mt-6 ml-[375px]">
           {ANOS.map((ano) => {
             const notasAno = disciplinasAtivas.map((d) => notas[d.id][ano]);
             return <MediaAno key={ano} notasAno={notasAno} />;
           })}
 
-          <MediaGeralDisciplinas
-            notas={notas}
-            anos={ANOS}
-          />
+          <MediaGeralDisciplinas notas={notas} anos={ANOS} />
+        </div>
+
+        {/* ---- MOBILE ---- */}
+
+        <div className="flex flex-col gap-6 md:hidden mt-4">
+
+          {disciplinasAtivas.map((d) => (
+            <div
+              key={d.id}
+              className="bg-[#030315] border border-[#EFA61F]/40 rounded-2xl p-4 flex flex-col gap-3"
+            >
+              <h2 className="text-[#EFA61F] text-lg font-semibold">{d.nome}</h2>
+
+              {/* Inputs por ano */}
+              <div className="grid grid-cols-2 gap-3">
+                {ANOS.map((ano) => (
+                  <div key={ano} className="flex flex-col gap-1">
+                    <span className="text-[#EFA61F] text-sm">{ano}</span>
+
+                    <input
+                      type="text"
+                      value={notas[d.id][ano]}
+                      onChange={(e) => {
+                        const valorFiltrado = e.target.value.replace(/[^\d.,]/g, "");
+                        setNotas((prev) => ({
+                          ...prev,
+                          [d.id]: { ...prev[d.id], [ano]: valorFiltrado },
+                        }));
+                      }}
+                      className="w-full h-10 rounded-xl bg-[#0B0B26] text-[#EFA61F] text-center border border-[#EFA61F]"
+                      placeholder="-"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Média por disciplina */}
+              <div>
+                <MediaDisciplina
+                  notas={{ [d.id]: notas[d.id] }}
+                  anos={ANOS}
+                  disciplinasSelecionadas={[d.id]}
+                />
+              </div>
+            </div>
+          ))}
+
+          {/* MÉDIAS GERAIS NO FINAL */}
+          <div className="bg-[#030315] border border-[#EFA61F]/40 rounded-2xl p-4 flex flex-col gap-3">
+            <h2 className="text-[#EFA61F] text-lg font-semibold">Médias Gerais</h2>
+
+            <div className="grid grid-cols-2 gap-3">
+              {ANOS.map((ano) => {
+                const notasAno = disciplinasAtivas.map((d) => notas[d.id][ano]);
+                return <MediaAno key={ano} notasAno={notasAno} />;
+              })}
+            </div>
+
+            <MediaGeralDisciplinas notas={notas} anos={ANOS} />
+          </div>
         </div>
       </div>
+      {mobile && (
+        <button
+          className="fixed top-4 right-4 w-12 h-12 rounded-full bg-[#C87A2A] flex items-center justify-center text-2xl shadow-lg border border-[#EFA61F] z-50"
+        >
+          ✓
+        </button>
+      )}
 
       {/* Overlays */}
       {overlay === "disciplinas" && (
